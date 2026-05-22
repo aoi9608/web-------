@@ -1,0 +1,53 @@
+  "use strict";
+
+      const tiles = []; // タイル配列
+
+      function init() {
+        let table = document.getElementById("table"); // <table>要素の参照
+
+        for (let i = 0; i < 5; i++) {
+          // 4行分ループ
+          let tr = document.createElement("tr"); // <tr>要素の作成
+          for (let j = 0; j < 5; j++) {
+            // 各列分ループ
+            let td = document.createElement("td"); // <td>要素の作成
+            let index = i * 5 + j;
+            td.className = "tile"; // class設定
+            td.index = index; // タイルの並び順
+            td.value = index; // 描画されている値
+            td.textContent = index == 0 ? "" : index; // 0は空欄に
+            td.onclick = click; // クリック時のハンドラ登録
+            tr.appendChild(td); // 行<tr>に列<td>を追加
+            tiles.push(td);
+          }
+          table.appendChild(tr); // テーブルに行<tr>を追加
+        }
+
+        for (let i = 0; i < 1000; i++) {
+          // 1000回、疑似的にランダムにクリックして並べ替え
+          click({ target: { index: Math.floor(Math.random() * 25) } });
+        }
+      }
+
+      function click(e) {
+        let i = e.target.index; // どの場所がクリックされたか
+
+        if (i - 5 >= 0 && tiles[i - 5].value == 0) {
+          swap(i, i - 5); // 上と入れ替え
+        } else if (i + 5 < 25 && tiles[i + 5].value == 0) {
+          swap(i, i + 5); // 下と入れ替え
+        } else if (i % 5 != 0 && tiles[i - 1].value == 0) {
+          swap(i, i - 1); // 左と入れ替え
+        } else if (i % 5 != 4 && tiles[i + 1].value == 0) {
+          swap(i, i + 1); // 右と入れ替え
+        }
+      }
+
+      // i番目のタイルとj番目のタイルの番号を入れ替え
+      function swap(i, j) {
+        let tmp = tiles[i].value; // 変更先を一時退避
+        tiles[i].textContent = tiles[j].textContent;
+        tiles[i].value = tiles[j].value;
+        tiles[j].textContent = tmp;
+        tiles[j].value = tmp;
+      }
